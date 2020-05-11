@@ -58,7 +58,6 @@ class ROSAgent(Node):
         """
         img, r, d, _ = self.env.step(self.action)
         self._publish_img(img)
-        self._publish_info()
 
     def _action_cb(self, msg):
         """
@@ -77,11 +76,18 @@ class ROSAgent(Node):
         vr = msg.vel_right
         self.action = np.array([vl, vr])
 
-    def _publish_info(self):
+    def _publish_info(self, img):
         """
         Publishes a default CameraInfo - TODO: Fix after distortion applied in simulator
         """
-        self.cam_info_pub.publish(CameraInfo())
+        
+        ci = CameraInfo()
+        ci.header.stamp = img.header.stamp
+        ci.header.frame_id = img.header.frame_id
+        
+        self.cam_info_pub.publish(ci)
+        
+        #self.cam_info_pub.publish(CameraInfo())
 
     def _publish_img(self, obs):
         """
@@ -99,7 +105,8 @@ class ROSAgent(Node):
         img_msg.data = np.array(cv2.imencode('.jpg', contig)[1]).tostring()
 
         self.cam_pub.publish(img_msg)
-
+        
+        self._publish_info(img_msg)
     #    def spin(self):
 
 
