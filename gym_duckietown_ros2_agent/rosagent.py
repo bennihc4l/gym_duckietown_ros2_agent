@@ -86,8 +86,6 @@ class ROSAgent(Node):
         ci.header.frame_id = img.header.frame_id
         
         self.cam_info_pub.publish(ci)
-        
-        #self.cam_info_pub.publish(CameraInfo())
 
     def _publish_img(self, obs):
         """
